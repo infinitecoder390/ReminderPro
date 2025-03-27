@@ -1,0 +1,27 @@
+version: "3.8" #docker-compose version
+services:
+  react-app:
+    # Set the container name
+    container_name: reminder-pro-fe
+
+    # Build the image using the Dockerfile in the current context
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+      # Map host port 5002 to container port 5002
+    ports:
+      - "5173:5173" #<host_port>:<container_port/protocol_port>
+
+    # Mount the current directory to /app in the container
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+    # Specify the command to run when the container starts
+    command: npm run dev
+
+    # Define environment variables for the container
+    environment:
+      - VITE_API_URL=http://localhost:3000
+      - VITE_WEB_URL=http://localhost:5173
