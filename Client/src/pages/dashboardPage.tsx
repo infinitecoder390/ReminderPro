@@ -30,6 +30,7 @@ import { getEnv, getInitials } from "@/lib/utils";
 import CategoryManagement from "@/components/CategoryManagement";
 import ApiClient from "@/lib/ApiClient";
 import { REMINDERS } from "@/lib/endpoints";
+import toast from "react-hot-toast";
 function DashboardPage() {
   const username: string = sessionStorage.getItem("username") || "";
   const email: string = sessionStorage.getItem("email") || "";
@@ -43,6 +44,27 @@ function DashboardPage() {
     const { data } = await ApiClient.get(`${REMINDERS}/todays`);
     setTodaysReminders(data);
   }
+  async function fetchTodaysDataToSchedule() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const { data } = await ApiClient.get(`${REMINDERS}/todays`);
+    for (const reminder of data) {
+      const [hour, minute] = reminder.time.split(":").map(Number);
+      if (hour === currentHour && minute === currentMinute) {
+        toast.success(`Reminder:${reminder.title}:${reminder.description}`);
+      }
+    }
+  }
+  // frontend scheduler to notify 
+  useEffect(() => {
+    fetchTodaysDataToSchedule();
+    const interval = setInterval(() => {
+      fetchTodaysDataToSchedule();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     fetchTodays();
     fetchUpcoming();
