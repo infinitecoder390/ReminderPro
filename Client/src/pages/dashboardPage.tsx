@@ -56,12 +56,12 @@ function DashboardPage() {
       }
     }
   }
-  // frontend scheduler to notify 
+  // frontend scheduler to notify
   useEffect(() => {
     fetchTodaysDataToSchedule();
     const interval = setInterval(() => {
       fetchTodaysDataToSchedule();
-    }, 1000);
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 
